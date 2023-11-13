@@ -31,7 +31,7 @@ export const Header = () =>
 { 
    return (
     <Box>     
-    <Grid container padding={"20px 50px"}>
+    <Grid container padding={"20px 100px"}>
     <ThemeProvider theme={theme}>
       <Grid xs={8} textAlign={'left'}>
       <Typography variant="logo">HUKIBU</Typography>
