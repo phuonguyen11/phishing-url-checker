@@ -1,19 +1,14 @@
-import axios from "axios"
+import axios from 'axios';
 
 export const getResult = async (url) => {
-    try {
-        const response = await axios.post(
-            'http://127.0.0.1:5000/api/v1/phishingURL',
-            { "url": url },
-            {
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            }
-          );
-      
-        console.log(response);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+    return await axios
+        .post(`http://127.0.0.1:5000/api/v1/phishingURL`, { url })
+        .then(function (response) {
+            console.log(response.data);
+            return response.data;
+        })
+        .catch(function (error) {
+            console.log(error);
+            return error.response;
+        });
+};
