@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Grid, Box, Typography, FormControl, TextField, Button, Stack } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import LinearProgress from '@mui/material/LinearProgress';
@@ -19,11 +19,15 @@ const CheckButton = styled(Button)(({ theme }) => ({
 
 export const Checker = () => {
     const [url, setUrl] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const [checked, setChecked] = useState(false);
+
     const [isPhishing, setIsPhishing] = useState(null);
     const handleChange = (event) => {
         setUrl(event.target.value);
         setChecked(false);
+        setIsPhishing(null);
+        
     };
     const getResultData = async () => {
         console.log(url);
@@ -33,16 +37,27 @@ export const Checker = () => {
         console.log(data);
 
         //condition to check legit or non-legit
+        if(data)
+        {
         if (data.result === 'Legit') {
             setIsPhishing(false);
         } else {
             setIsPhishing(true);
         }
+        }
     };
     const handleClick = () => {
         setChecked(true);
         getResultData();
+        setIsLoading(true);
     };
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            setIsLoading(false);
+        }, 1000);
+        return () => clearTimeout(timeout);
+      }, [isLoading]);
+    
 
     return (
         <Grid container spacing={2} alignItems={'center'} id="checkerSection">
@@ -84,8 +99,20 @@ export const Checker = () => {
                             value={url}
                             onChange={handleChange}
                         ></TextField>
-                        {checked ? (
-                            isPhishing === true && url ? (
+                        {checked ? 
+                            url && isLoading?
+                            <Stack sx={{ width: '100%', marginTop: "20px"}} spacing={2}>
+                            <LinearProgress 
+                            sx={{
+                              backgroundColor: 'white',
+                              '& .MuiLinearProgress-bar': {
+                                backgroundColor: '#11D9C5'
+                              }
+                            }}
+                          />
+                         </Stack>      
+                             :(
+                            isPhishing === true && url && !isLoading? (
                                 <Typography
                                     style={{
                                         marginTop: '15px',
@@ -99,7 +126,7 @@ export const Checker = () => {
                                     This URL has been identified as a <span style={{ color: '#FF6161' }}>PHISHING</span>{' '}
                                     attack.
                                 </Typography>
-                            ) : url && isPhishing === false ? (
+                            ) : url && isPhishing === false && !isLoading? (
                                 <Typography
                                     style={{
                                         marginTop: '15px',
