@@ -3,7 +3,8 @@ import { useState } from "react";
 import { Grid, Box, Typography, FormControl, TextField, Button, Stack } from "@mui/material";
 import { styled } from '@mui/material/styles';
 import LinearProgress from '@mui/material/LinearProgress';
-  
+import { getResult } from "../../api";
+
 const height = 100
 const width = 600
 const labelOffset = -6
@@ -18,14 +19,25 @@ const CheckButton = styled(Button)(({ theme }) => ({
 
 export const Checker = () => {
     const [url, setUrl] = useState("")
-    const [isPhishing, setIsPhishing] = useState(true)
-    const [isLoading, setIsLoading] = useState(false)
+    const [checked, setChecked] = useState(false)
+    const [isPhishing, setIsPhishing] = useState(null)
     const handleChange = (event) => {
         setUrl(event.target.value);
+        setChecked(false);
     }    
+    const getResultData = async() => 
+    {
+        console.log(url);
+
+        //uncomment this line to get data
+        // const data = await getResult(url);
+        //condition to check legit or non-legit
+        setIsPhishing(true);
+    }
     const handleClick = () => 
     {
-        setIsLoading(true);
+        setChecked(true);
+        getResultData();
     }
   
     return (
@@ -74,26 +86,16 @@ export const Checker = () => {
                 >
                 </TextField>
                 {
-                url?
-                isLoading?
-                <Stack sx={{ width: '100%', marginTop: "20px"}} spacing={2}>
-                      <LinearProgress 
-                      sx={{
-                        backgroundColor: 'white',
-                        '& .MuiLinearProgress-bar': {
-                          backgroundColor: '#11D9C5'
-                        }
-                      }}
-                    />
-                </Stack>
-                : isPhishing?
+                checked?
+                isPhishing === true && url?
                 <Typography style={{ marginTop: "15px", textTransform: 'none', color: "#FFF", fontWeight: 500, fontStyle: "italic", fontSize: 20 }}>
                 This URL has been identified as a <span style={{ color: "#FF6161" }}>PHISHING</span> attack.
                 </Typography>
-                :
+                :url && isPhishing === false?
                 <Typography style={{ marginTop: "15px", textTransform: 'none', color: "#FFF", fontWeight: 500, fontStyle: "italic", fontSize: 20 }}>
                 This URL is <span style={{ color: "#11D9C5" }}>SAFE</span>!
                 </Typography>
+                : <></>   
                 : <></>
                 }
                 <CheckButton type="submit"
