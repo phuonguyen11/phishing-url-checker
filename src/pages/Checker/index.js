@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Grid, Box, Typography, FormControl, TextField, Button, Stack } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import LinearProgress from '@mui/material/LinearProgress';
@@ -30,35 +30,24 @@ export const Checker = () => {
         
     };
     const getResultData = async () => {
-        console.log(url);
-
-        //uncomment this line to get data
-        const data = await getResult(url);
-        console.log(data);
-
-        //condition to check legit or non-legit
-        if(data)
-        {
-        if (data.result === 'Legit') {
-            setIsPhishing(false);
-        } else {
-            setIsPhishing(true);
-        }
-        }
+         await getResult(url)
+        .then((data) => {
+            if (data) {
+              if (data.result === 'Legit') {
+                setIsPhishing(false);
+              } else {
+                setIsPhishing(true);
+              }
+              setIsLoading(false);
+            }
+          })
     };
+    
     const handleClick = () => {
         setChecked(true);
         getResultData();
         setIsLoading(true);
     };
-    useEffect(() => {
-        const timeout = setTimeout(() => {
-            setIsLoading(false);
-        }, 1000);
-        return () => clearTimeout(timeout);
-      }, [isLoading]);
-    
-
     return (
         <Grid container spacing={2} alignItems={'center'} id="checkerSection">
             <Grid item xs={6} md={8}>
